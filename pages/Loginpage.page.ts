@@ -19,6 +19,8 @@ export class LoginPage {
     readonly cityInput: Locator;
     readonly zipCodeInput: Locator;
     readonly mobileNumberInput: Locator;
+    readonly accCreatedText: Locator;
+    readonly continueBtn: Locator;
     constructor(page:Page){
         this.page = page;
         this.loginLink = page.getByText(' Signup / Login');
@@ -38,6 +40,8 @@ export class LoginPage {
         this.cityInput = page.getByText('City');
         this.zipCodeInput = page.locator('#zipcode');
         this.mobileNumberInput = page.getByText('Mobile Number');
+        this.accCreatedText = page.getByText('Account Created!');
+        this.continueBtn = page.getByRole('link', {name: 'Continue'});
     }
 
     async clickLoginOrSignUpLink(){
@@ -70,5 +74,8 @@ export class LoginPage {
         await this.mobileNumberInput.fill('123412311');
         await this.createAccBtn.click();
         await expect(this.page).toHaveURL(/.*account_created/);
+        await expect(this.accCreatedText).toBeVisible();
+        await this.continueBtn.click();
+        await expect(this.page.locator('li a b')).toHaveText(name);
     }
 }
