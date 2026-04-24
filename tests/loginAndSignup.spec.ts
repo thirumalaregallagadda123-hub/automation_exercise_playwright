@@ -16,7 +16,7 @@ test.describe('Login and Signup tests', () => {
         await loginPage.clickLoginOrSignUpLink();
     });
 
-    test('Verify that user can signup successfully', async () => {
+    test('Verify that user can signup successfully', { tag: '@regression' }, async () => {
         await loginPage.clickLoginOrSignUpLink();
         await loginPage.singupFlow();
 });
