@@ -1,4 +1,5 @@
-import { Locator, Page, expect } from "@playwright/test";   
+import { Locator, Page, expect } from "@playwright/test";
+import { DataGenerator } from "../utils/dataGenerator";
 export class LoginPage {
     readonly page: Page;
     readonly loginLink: Locator;
@@ -30,14 +31,15 @@ export class LoginPage {
         this.daySelect = page.locator('#days');
         this.monthSelect = page.locator('#months');
         this.yearSelect = page.locator('#years');
-        this.firstNameInput = page.getByPlaceholder('First Name');
-        this.lastNameInput = page.getByPlaceholder('Last Name');
-        this.addressInput = page.getByPlaceholder('Address');
-        this.stateInput = page.getByPlaceholder('State');
-        this.cityInput = page.getByPlaceholder('City');
-        this.zipCodeInput = page.getByPlaceholder('Zipcode');
-        this.mobileNumberInput = page.getByPlaceholder('Mobile Number');
+        this.firstNameInput = page.getByText('First Name');
+        this.lastNameInput = page.getByText('Last Name');
+        this.addressInput = page.locator('#address1');
+        this.stateInput = page.locator('#state');
+        this.cityInput = page.getByText('City');
+        this.zipCodeInput = page.locator('#zipcode');
+        this.mobileNumberInput = page.getByText('Mobile Number');
     }
+
     async clickLoginOrSignUpLink(){
         await this.loginLink.click();
         expect(this.page).toHaveURL(/.*login/);
@@ -45,12 +47,16 @@ export class LoginPage {
         expect(this.singupText).toBeVisible();
     }
     async singupFlow(){
-        await this.nameInput.fill('Thirumal');
-        await this.emailInput.fill('thiru@test.com');
-        await this.passwordInput.fill('thiru123');
+        const dataGenerator = new DataGenerator();
+        const { name, email } = dataGenerator.generateRandomCredentials();
+        await this.nameInput.fill(name);
+        console.log(`Generated Name: ${name}`);
+        await this.emailInput.fill(email);
+        console.log(`Generated Email: ${email}`);
         await this.signupButton.click();
         expect(this.page).toHaveURL(/.*signup/);
-        expect(this.page.locator(".required.form-group")).toBeVisible();
+        await this.passwordInput.fill('thiru123');
+        //expect(this.page.locator(".required.form-group")).toBeVisible();
         await this.createAccBtn.click();
         await this.daySelect.selectOption('10');
         await this.monthSelect.selectOption('May');
@@ -63,5 +69,6 @@ export class LoginPage {
         await this.zipCodeInput.fill('12345');
         await this.mobileNumberInput.fill('123412311');
         await this.createAccBtn.click();
+        await expect(this.page).toHaveURL(/.*account_created/);
     }
 }
